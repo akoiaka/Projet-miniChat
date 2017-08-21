@@ -1,13 +1,3 @@
-<?php
-// Connexion à la base de données
-/* TODO */
-
-if ($_POST) {
-    // Insertion du message à l'aide d'une requête préparée
-    /* TODO */
-}
-
-?>
 <!DOCTYPE>
 <html>
 
@@ -25,26 +15,10 @@ if ($_POST) {
         <main class="mdl-layout__content">
             <div class="page-content">
                 <ul class="demo-list-item mdl-list" id="conversation">
-<?php
-// Récupération des 10 derniers messages
-/* TODO */
 
-// Affichage de chaque message (toutes les données sont protégées par htmlspecialchars)
-/* TODO */
-// while (...) {
-?>
-                    <li class="mdl-list__item">
-                        <span class="mdl-list__item-primary-content">
-                            <strong><?php /* TODO */ ?></strong>: <?php /* TODO */ ?>
-                        </span>
-                    </li>
-<?php
-// }
-// ...
-?>
                 </ul>
 
-                <form action="#" class="mdl-grid" method="POST">
+                <form action="minichat_post.php" class="mdl-grid" method="POST">
                     <div class="mdl-cell mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                         <input class="mdl-textfield__input" type="text" name="pseudo" id="pseudo">
                         <label class="mdl-textfield__label" for="sample3">Pseudo</label>
@@ -57,6 +31,30 @@ if ($_POST) {
                         <i class="material-icons">send</i>
                     </button>
                 </form>
+
+                <?php
+                // Connexion à la base de données
+                try
+                {
+                    $bdd = new PDO('mysql:host=localhost;dbname=minichat;charset=utf8', 'akoi', 'ok');
+                }
+                catch(Exception $e)
+                {
+                    die('Erreur : '.$e->getMessage());
+                }
+
+                // Récupération des 10 derniers messages
+                $reponse = $bdd->query('SELECT pseudo, message FROM chat ORDER BY ID DESC LIMIT 0, 10');
+
+                // Affichage de chaque message (toutes les données sont protégées par htmlspecialchars)
+                while ($donnees = $reponse->fetch())
+                {
+                    echo '<p><strong>' . htmlspecialchars($donnees['pseudo']) . '</strong> : ' . htmlspecialchars($donnees['message']) . '</p>';
+                }
+
+                $reponse->closeCursor();
+
+                ?>
             </div>
         </main>
     </div>
